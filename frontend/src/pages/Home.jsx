@@ -107,6 +107,7 @@ export default function Home() {
           {user ? (
             <div className="user-menu">
               <span className="user-name">👤 {user.name}</span>
+              <button className="my-orders-link" onClick={() => navigate('/my-orders')}>📦 My Orders</button>
               <button className="logout-btn" onClick={() => dispatch(logout())}>Logout</button>
             </div>
           ) : (

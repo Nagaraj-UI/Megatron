@@ -1,33 +1,43 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { clearCart } from '../store/cart/cartActions';
 import axios from 'axios';
-import OrderSuccess from '../components/OrderSuccess';
+import PaymentModal from '../components/PaymentModal';
 
 export default function OrderPage() {
   const { state } = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [name, setName] = useState('');
+  const user = useSelector(state => state.auth.user);
+  const [name, setName] = useState(user?.name || '');
+  const [showPayment, setShowPayment] = useState(false);
   const [done, setDone] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [trackingNumber, setTrackingNumber] = useState('');
 
   if (!state?.cart) {
     navigate('/');
     return null;
   }
 
-  const placeOrder = async () => {
+  const handleProceedToPayment = () => {
     if (!name.trim()) return alert('Please enter your name');
+    setShowPayment(true);
+  };
+
+  const handlePaymentSuccess = async () => {
+    setShowPayment(false);
     setLoading(true);
     try {
       const payload = {
         customerName: name,
+        customerEmail: user?.email || 'guest@example.com',
         items: state.cart.map(c => ({ itemId: c._id, name: c.name, price: c.price, quantity: c.quantity })),
         total: state.total,
       };
-      await axios.post('/api/orders', payload);
+      const { data } = await axios.post('/api/orders', payload);
+      setTrackingNumber(data.trackingNumber);
       dispatch(clearCart());
       setDone(true);
     } catch {
@@ -37,7 +47,41 @@ export default function OrderPage() {
     }
   };
 
-  if (done) return <OrderSuccess name={name} />;
+  const handlePaymentCancel = () => {
+    setShowPayment(false);
+  };
+
+  if (loading) {
+    return (
+      <div className="order-page">
+        <div className="loading">
+          <div className="spinner" />
+          <p>Creating your order...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (done) return (
+    <div className="order-success">
+      <div className="success-icon">✅</div>
+      <h1>Order Placed Successfully!</h1>
+      <p>Thanks <strong>{name}</strong>, your order is confirmed.</p>
+      <div className="tracking-info">
+        <p className="tracking-label">Your Tracking Number:</p>
+        <p className="tracking-number-big">{trackingNumber}</p>
+        <p className="tracking-hint">Save this number to track your order</p>
+      </div>
+      <div className="success-actions">
+        <button className="track-order-btn" onClick={() => navigate(`/track/${trackingNumber}`)}>
+          Track Order
+        </button>
+        <button className="continue-btn" onClick={() => navigate('/')}>
+          Continue Shopping
+        </button>
+      </div>
+    </div>
+  );
 
   return (
     <div className="order-page">
@@ -73,12 +117,20 @@ export default function OrderPage() {
 
         <button
           className="place-order-btn"
-          onClick={placeOrder}
-          disabled={loading}
+          onClick={handleProceedToPayment}
         >
-          {loading ? 'Placing Order...' : 'Place Order'}
+          Proceed to Payment
         </button>
       </div>
+
+      {/* Payment Modal */}
+      {showPayment && (
+        <PaymentModal
+          amount={state.total}
+          onSuccess={handlePaymentSuccess}
+          onCancel={handlePaymentCancel}
+        />
+      )}
     </div>
   );
 }
