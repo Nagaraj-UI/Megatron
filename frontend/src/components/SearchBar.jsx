@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setQuery, fetchItems } from '../store/itemsSlice';
+import { setQuery, fetchItems } from '../store/items/itemsActions';
 
 export default function SearchBar() {
   const dispatch = useDispatch();

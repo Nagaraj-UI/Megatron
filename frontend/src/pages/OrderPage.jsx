@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { clearCart } from '../store/cartSlice';
+import { clearCart } from '../store/cart/cartActions';
 import axios from 'axios';
 import OrderSuccess from '../components/OrderSuccess';
 

@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { removeFromCart, updateQuantity } from '../store/cartSlice';
+import { removeFromCart, updateQuantity } from '../store/cart/cartActions';
 
 export default function Cart() {
   const dispatch = useDispatch();
@@ -27,9 +27,9 @@ export default function Cart() {
               <p className="cart-item-price">${(item.price * item.quantity).toFixed(2)}</p>
             </div>
             <div className="cart-qty">
-              <button onClick={() => dispatch(updateQuantity({ id: item._id, quantity: item.quantity - 1 }))}>−</button>
+              <button onClick={() => dispatch(updateQuantity(item._id, item.quantity - 1))}>−</button>
               <span>{item.quantity}</span>
-              <button onClick={() => dispatch(updateQuantity({ id: item._id, quantity: item.quantity + 1 }))}>+</button>
+              <button onClick={() => dispatch(updateQuantity(item._id, item.quantity + 1))}>+</button>
             </div>
             <button className="cart-remove" onClick={() => dispatch(removeFromCart(item._id))}>✕</button>
           </div>

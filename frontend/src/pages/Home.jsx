@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { fetchItems, fetchFeaturedItems, fetchNewArrivals, fetchSaleItems, setActiveCategory, setActiveSection } from '../store/itemsSlice';
+import { fetchItems, fetchFeaturedItems, fetchNewArrivals, fetchSaleItems, setActiveCategory, setActiveSection } from '../store/items/itemsActions';
 import { logout } from '../store/auth/authActions';
 import SearchBar from '../components/SearchBar';
 import ItemCard from '../components/ItemCard';
@@ -30,10 +30,10 @@ export default function Home() {
     featuredItems,
     newArrivals,
     saleItems,
-    status, 
-    featuredStatus,
-    newArrivalsStatus,
-    saleStatus,
+    loading, 
+    featuredLoading,
+    newArrivalsLoading,
+    saleLoading,
     activeCategory,
     activeSection 
   } = useSelector(state => state.items);
@@ -57,20 +57,20 @@ export default function Home() {
   // Determine which items to display based on active section
   let displayItems = items;
   let sectionTitle = 'All Items';
-  let currentStatus = status;
+  let currentLoading = loading;
 
   if (activeSection === 'featured') {
     displayItems = featuredItems;
     sectionTitle = '⭐ Featured & Trending';
-    currentStatus = featuredStatus;
+    currentLoading = featuredLoading;
   } else if (activeSection === 'new') {
     displayItems = newArrivals;
     sectionTitle = '🆕 New Arrivals';
-    currentStatus = newArrivalsStatus;
+    currentLoading = newArrivalsLoading;
   } else if (activeSection === 'sale') {
     displayItems = saleItems;
     sectionTitle = '🔥 Sale Items';
-    currentStatus = saleStatus;
+    currentLoading = saleLoading;
   } else if (activeCategory !== 'All') {
     displayItems = items.filter(i => i.category === activeCategory);
     sectionTitle = activeCategory;
@@ -199,20 +199,14 @@ export default function Home() {
             <span className="item-count">{displayItems.length} items</span>
           </div>
 
-          {currentStatus === 'loading' && (
+          {currentLoading && (
             <div className="loading">
               <div className="spinner" />
               <p>Loading items...</p>
             </div>
           )}
 
-          {currentStatus === 'failed' && (
-            <div className="error-msg">
-              ⚠️ Could not load items. Make sure the backend is running on port 5001.
-            </div>
-          )}
-
-          {currentStatus === 'succeeded' && displayItems.length === 0 && (
+          {!currentLoading && displayItems.length === 0 && (
             <div className="empty-msg">No items found.</div>
           )}
 
