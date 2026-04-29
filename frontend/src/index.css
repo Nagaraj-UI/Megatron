@@ -1044,3 +1044,282 @@ body {
     font-size: 12px;
   }
 }
+
+/* ── ITEM DETAIL MODAL ── */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 16px;
+  max-width: 900px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: slideUp 0.3s ease;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: background 0.2s;
+}
+
+.modal-close:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.modal-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  padding: 32px;
+}
+
+.modal-image-section {
+  position: relative;
+}
+
+.modal-image-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3/4;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f5f5f5;
+}
+
+.modal-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: #e53935;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+  z-index: 1;
+}
+
+.modal-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.modal-details-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.modal-category {
+  font-size: 12px;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.modal-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #222;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.modal-description {
+  font-size: 15px;
+  color: #666;
+  line-height: 1.6;
+}
+
+.modal-price-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-price-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.modal-price {
+  font-size: 32px;
+  font-weight: 800;
+  color: #e53935;
+}
+
+.modal-price-sale {
+  font-size: 32px;
+  font-weight: 800;
+  color: #e53935;
+}
+
+.modal-price-original {
+  font-size: 20px;
+  color: #999;
+  text-decoration: line-through;
+}
+
+.modal-discount-badge {
+  background: #4caf50;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+
+.modal-features {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.modal-features h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #222;
+  margin: 0 0 12px 0;
+}
+
+.modal-features ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.modal-features li {
+  font-size: 14px;
+  color: #555;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.modal-add-btn {
+  flex: 1;
+  background: #e53935;
+  color: #fff;
+  border: none;
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.modal-add-btn:hover {
+  background: #c62828;
+  transform: translateY(-2px);
+}
+
+.modal-add-btn:active {
+  transform: translateY(0);
+}
+
+.modal-cancel-btn {
+  background: #f5f5f5;
+  color: #666;
+  border: 1px solid #ddd;
+  padding: 16px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modal-cancel-btn:hover {
+  background: #eee;
+  border-color: #ccc;
+}
+
+/* ── MODAL RESPONSIVE ── */
+@media (max-width: 768px) {
+  .modal-body {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 24px;
+  }
+
+  .modal-title {
+    font-size: 22px;
+  }
+
+  .modal-price,
+  .modal-price-sale {
+    font-size: 26px;
+  }
+
+  .modal-price-original {
+    font-size: 16px;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+  }
+
+  .modal-cancel-btn {
+    width: 100%;
+  }
+}

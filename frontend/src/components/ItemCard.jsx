@@ -1,11 +1,16 @@
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../store/cart/cartActions';
 
-export default function ItemCard({ item }) {
+export default function ItemCard({ item, onItemClick }) {
   const dispatch = useDispatch();
 
+  const handleAddToCart = (e) => {
+    e.stopPropagation(); // Prevent modal from opening when clicking Add button
+    dispatch(addToCart(item));
+  };
+
   return (
-    <div className="item-card">
+    <div className="item-card" onClick={() => onItemClick(item)}>
       <div className="item-image-wrap">
         {item.badge && <span className="item-badge">{item.badge}</span>}
         <img
@@ -29,7 +34,7 @@ export default function ItemCard({ item }) {
               <span className="item-price">${item.price.toFixed(2)}</span>
             )}
           </div>
-          <button className="add-btn" onClick={() => dispatch(addToCart(item))}>
+          <button className="add-btn" onClick={handleAddToCart}>
             + Add
           </button>
         </div>

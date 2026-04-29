@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { fetchItems, fetchFeaturedItems, fetchNewArrivals, fetchSaleItems, setActiveCategory, setActiveSection } from '../store/items/itemsActions';
@@ -7,6 +7,7 @@ import SearchBar from '../components/SearchBar';
 import ItemCard from '../components/ItemCard';
 import Cart from '../components/Cart';
 import Footer from '../components/Footer';
+import ItemDetailModal from '../components/ItemDetailModal';
 import logoImage from '../assets/image.png';
 const CATEGORIES = ['All', 'Women', 'Men', 'Kids', 'Dresses', 'Tops', 'Beachwear', 'Shoes', 'Accessories'];
 
@@ -25,6 +26,7 @@ const CATEGORY_ICONS = {
 export default function Home() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [selectedItem, setSelectedItem] = useState(null);
   const { 
     list: items, 
     featuredItems,
@@ -212,7 +214,7 @@ export default function Home() {
 
           <div className="items-grid">
             {displayItems.map(item => (
-              <ItemCard key={item._id} item={item} />
+              <ItemCard key={item._id} item={item} onItemClick={setSelectedItem} />
             ))}
           </div>
         </div>
@@ -223,6 +225,11 @@ export default function Home() {
 
       {/* Footer */}
       <Footer />
+
+      {/* Item Detail Modal */}
+      {selectedItem && (
+        <ItemDetailModal item={selectedItem} onClose={() => setSelectedItem(null)} />
+      )}
     </div>
   );
 }
