@@ -17,8 +17,25 @@ import {
   SET_ACTIVE_SECTION,
 } from './itemsConstants';
 
+// Cache TTL in milliseconds (5 minutes)
+const CACHE_TTL = 5 * 60 * 1000;
+
+// Helper to check if cache is still valid
+const isCacheValid = (lastFetchTime) => {
+  if (!lastFetchTime) return false;
+  return Date.now() - lastFetchTime < CACHE_TTL;
+};
+
 // Fetch all items with optional search query
-export const fetchItems = (query = '') => async (dispatch) => {
+export const fetchItems = (query = '', forceRefresh = false) => async (dispatch, getState) => {
+  const { items } = getState();
+  
+  // Check cache - skip if already fetched and cache is valid
+  if (!forceRefresh && items.itemsFetched && isCacheValid(items.lastFetchTime.items) && !query) {
+    console.log('Using cached items');
+    return;
+  }
+
   try {
     dispatch({ type: FETCH_ITEMS_REQUEST });
 
@@ -37,7 +54,15 @@ export const fetchItems = (query = '') => async (dispatch) => {
 };
 
 // Fetch featured items
-export const fetchFeaturedItems = () => async (dispatch) => {
+export const fetchFeaturedItems = (forceRefresh = false) => async (dispatch, getState) => {
+  const { items } = getState();
+  
+  // Check cache
+  if (!forceRefresh && items.featuredFetched && isCacheValid(items.lastFetchTime.featured)) {
+    console.log('Using cached featured items');
+    return;
+  }
+
   try {
     dispatch({ type: FETCH_FEATURED_REQUEST });
 
@@ -56,7 +81,15 @@ export const fetchFeaturedItems = () => async (dispatch) => {
 };
 
 // Fetch new arrivals
-export const fetchNewArrivals = () => async (dispatch) => {
+export const fetchNewArrivals = (forceRefresh = false) => async (dispatch, getState) => {
+  const { items } = getState();
+  
+  // Check cache
+  if (!forceRefresh && items.newArrivalsFetched && isCacheValid(items.lastFetchTime.newArrivals)) {
+    console.log('Using cached new arrivals');
+    return;
+  }
+
   try {
     dispatch({ type: FETCH_NEW_ARRIVALS_REQUEST });
 
@@ -75,7 +108,15 @@ export const fetchNewArrivals = () => async (dispatch) => {
 };
 
 // Fetch sale items
-export const fetchSaleItems = () => async (dispatch) => {
+export const fetchSaleItems = (forceRefresh = false) => async (dispatch, getState) => {
+  const { items } = getState();
+  
+  // Check cache
+  if (!forceRefresh && items.saleFetched && isCacheValid(items.lastFetchTime.sale)) {
+    console.log('Using cached sale items');
+    return;
+  }
+
   try {
     dispatch({ type: FETCH_SALE_REQUEST });
 

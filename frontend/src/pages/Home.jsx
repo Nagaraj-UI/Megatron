@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { fetchItems, fetchFeaturedItems, fetchNewArrivals, fetchSaleItems, setActiveCategory, setActiveSection } from '../store/items/itemsActions';
@@ -27,56 +27,68 @@ export default function Home() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [selectedItem, setSelectedItem] = useState(null);
+  
   const { 
-    list: items, 
+    list, 
     featuredItems,
     newArrivals,
     saleItems,
-    loading, 
+    loading: itemsLoading, 
     featuredLoading,
     newArrivalsLoading,
     saleLoading,
     activeCategory,
     activeSection 
   } = useSelector(state => state.items);
-  const cartCount = useSelector(state => state.cart.items.reduce((s, i) => s + i.quantity, 0));
+  
+  const cartItems = useSelector(state => state.cart.items);
   const user = useSelector(state => state.auth.user);
 
   useEffect(() => {
     dispatch(fetchItems(''));
   }, [dispatch]);
 
-  const handleShopNow = () => {
-    // Fetch all special collections
+  const handleShopNow = useCallback(() => {
+    // Fetch all special collections (with caching)
     dispatch(fetchFeaturedItems());
     dispatch(fetchNewArrivals());
     dispatch(fetchSaleItems());
     dispatch(setActiveSection('featured'));
     // Scroll to products section
     document.querySelector('.products-section')?.scrollIntoView({ behavior: 'smooth' });
-  };
+  }, [dispatch]);
 
-  // Determine which items to display based on active section
-  let displayItems = items;
-  let sectionTitle = 'All Items';
-  let currentLoading = loading;
+  // Memoize filtered items to prevent unnecessary recalculations
+  const { displayItems, sectionTitle, currentLoading } = useMemo(() => {
+    let items = list;
+    let title = 'All Items';
+    let loading = itemsLoading;
 
-  if (activeSection === 'featured') {
-    displayItems = featuredItems;
-    sectionTitle = '⭐ Featured & Trending';
-    currentLoading = featuredLoading;
-  } else if (activeSection === 'new') {
-    displayItems = newArrivals;
-    sectionTitle = '🆕 New Arrivals';
-    currentLoading = newArrivalsLoading;
-  } else if (activeSection === 'sale') {
-    displayItems = saleItems;
-    sectionTitle = '🔥 Sale Items';
-    currentLoading = saleLoading;
-  } else if (activeCategory !== 'All') {
-    displayItems = items.filter(i => i.category === activeCategory);
-    sectionTitle = activeCategory;
-  }
+    if (activeSection === 'featured') {
+      items = featuredItems;
+      title = '⭐ Featured & Trending';
+      loading = featuredLoading;
+    } else if (activeSection === 'new') {
+      items = newArrivals;
+      title = '🆕 New Arrivals';
+      loading = newArrivalsLoading;
+    } else if (activeSection === 'sale') {
+      items = saleItems;
+      title = '🔥 Sale Items';
+      loading = saleLoading;
+    } else if (activeCategory !== 'All') {
+      items = list.filter(i => i.category === activeCategory);
+      title = activeCategory;
+    }
+
+    return { displayItems: items, sectionTitle: title, currentLoading: loading };
+  }, [list, featuredItems, newArrivals, saleItems, activeSection, activeCategory, itemsLoading, featuredLoading, newArrivalsLoading, saleLoading]);
+
+  // Memoize cart count calculation
+  const cartCount = useMemo(() => 
+    cartItems.reduce((s, i) => s + i.quantity, 0),
+    [cartItems]
+  );
 
   return (
     <div className="page">

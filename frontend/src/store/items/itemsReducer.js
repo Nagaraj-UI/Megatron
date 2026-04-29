@@ -29,6 +29,17 @@ const initialState = {
   query: '',
   activeCategory: 'All',
   activeSection: 'all', // 'all' | 'featured' | 'new' | 'sale'
+  // Cache flags to prevent duplicate API calls
+  itemsFetched: false,
+  featuredFetched: false,
+  newArrivalsFetched: false,
+  saleFetched: false,
+  lastFetchTime: {
+    items: null,
+    featured: null,
+    newArrivals: null,
+    sale: null,
+  },
 };
 
 const itemsReducer = (state = initialState, action) => {
@@ -45,6 +56,11 @@ const itemsReducer = (state = initialState, action) => {
         ...state,
         loading: false,
         list: action.payload,
+        itemsFetched: true,
+        lastFetchTime: {
+          ...state.lastFetchTime,
+          items: Date.now(),
+        },
       };
     case FETCH_ITEMS_FAILURE:
       return {
@@ -65,6 +81,11 @@ const itemsReducer = (state = initialState, action) => {
         ...state,
         featuredLoading: false,
         featuredItems: action.payload,
+        featuredFetched: true,
+        lastFetchTime: {
+          ...state.lastFetchTime,
+          featured: Date.now(),
+        },
       };
     case FETCH_FEATURED_FAILURE:
       return {
@@ -85,6 +106,11 @@ const itemsReducer = (state = initialState, action) => {
         ...state,
         newArrivalsLoading: false,
         newArrivals: action.payload,
+        newArrivalsFetched: true,
+        lastFetchTime: {
+          ...state.lastFetchTime,
+          newArrivals: Date.now(),
+        },
       };
     case FETCH_NEW_ARRIVALS_FAILURE:
       return {
@@ -105,6 +131,11 @@ const itemsReducer = (state = initialState, action) => {
         ...state,
         saleLoading: false,
         saleItems: action.payload,
+        saleFetched: true,
+        lastFetchTime: {
+          ...state.lastFetchTime,
+          sale: Date.now(),
+        },
       };
     case FETCH_SALE_FAILURE:
       return {

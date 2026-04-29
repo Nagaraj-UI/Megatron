@@ -1,7 +1,8 @@
+import { memo } from 'react';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../store/cart/cartActions';
 
-export default function ItemCard({ item, onItemClick }) {
+const ItemCard = memo(function ItemCard({ item, onItemClick }) {
   const dispatch = useDispatch();
 
   const handleAddToCart = (e) => {
@@ -41,4 +42,6 @@ export default function ItemCard({ item, onItemClick }) {
       </div>
     </div>
   );
-}
+});
+
+export default ItemCard;
