@@ -15,7 +15,7 @@ export default function Cart() {
       <h3 className="cart-title">🛒 My Cart ({cartItems.length})</h3>
       <div className="cart-items">
         {cartItems.map(item => (
-          <div key={item._id} className="cart-item">
+          <div key={item._id}>
             <img
               src={item.image || 'https://via.placeholder.com/50'}
               alt={item.name}

@@ -76,7 +76,6 @@ export default function Footer() {
           <span className="payment-icon">💳 Mastercard</span>
           <span className="payment-icon">💳 Amex</span>
           <span className="payment-icon">💳 PayPal</span>
-          <span className="payment-icon">💳 Apple Pay</span>
           <span className="payment-icon">💳 Google Pay</span>
         </div>
       </div>
